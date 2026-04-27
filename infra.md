@@ -414,6 +414,487 @@ Use this narrative:
 > “In addition to provisioning infrastructure, we provide reusable templates—like Dockerfiles, CI/CD pipelines, and service blueprints—so teams can quickly experiment, especially with GenAI use cases. This enables ‘vibe coding,’ where developers can go from idea to working prototype in hours instead of days.”
 
 ---
+You are an expert AWS CDK developer. Generate production-ready **AWS CDK (TypeScript)** code for a **multi-account, platform-based architecture**.
+
+## Goal
+
+Build a modular CDK project that provisions:
+
+* **Platform Stack Group (shared infrastructure)**
+* **Application Stack Group (runtime workloads)**
+
+Follow best practices for:
+
+* security
+* scalability
+* reusability
+* clean separation of concerns
+
+---
+
+## Project Structure
+
+Create a CDK app with this structure:
+
+```
+/cdk
+  /bin
+    app.ts
+  /lib
+    /platform
+      network-stack.ts
+      security-stack.ts
+      ingress-stack.ts
+      messaging-stack.ts
+      data-stack.ts
+      observability-stack.ts
+    /application
+      compute-stack.ts
+      api-stack.ts
+      worker-stack.ts
+      inference-stack.ts
+      integration-stack.ts
+  /constructs
+      ecs-service-construct.ts
+      vpc-endpoints-construct.ts
+      rds-construct.ts
+      opensearch-construct.ts
+  package.json
+  tsconfig.json
+```
+
+---
+
+## Platform Stack Group
+
+### 1. Network Stack
+
+* Create VPC with:
+
+  * public subnets (for ALB if needed)
+  * private application subnets (ECS)
+  * isolated/data subnets (RDS, OpenSearch)
+* Add **VPC Interface Endpoints** for:
+
+  * Secrets Manager
+  * KMS
+  * SQS
+  * Bedrock
+  * CloudWatch Logs
+* Enable private DNS
+
+---
+
+### 2. Security Stack
+
+* IAM roles for ECS task execution
+* IAM roles for application services
+* KMS key
+* Secrets Manager sample secret
+
+---
+
+### 3. Ingress Stack (Shared Account)
+
+* API Gateway (HTTP API)
+* WAF Web ACL
+* Associate WAF with API Gateway
+* Output API endpoint
+
+---
+
+### 4. Messaging Stack
+
+* SQS queue
+* Dead Letter Queue (DLQ)
+* Visibility timeout config
+
+---
+
+### 5. Data Stack
+
+* RDS (Postgres)
+* ElastiCache Redis
+* S3 bucket
+* OpenSearch domain (vector store)
+
+---
+
+### 6. Observability Stack
+
+* CloudWatch log groups
+* Alarms (basic CPU / error alarms)
+* Optional X-Ray / tracing setup
+
+---
+
+## Application Stack Group
+
+### 1. Compute Stack
+
+* ECS Cluster (Fargate)
+* Application Load Balancer
+* ECS Service with:
+
+  * task definition
+  * container (sample image)
+  * environment variables
+  * secrets from Secrets Manager
+
+---
+
+### 2. API Stack
+
+* Integrate API Gateway with ALB or ECS service
+* Route `/api/*` to ECS backend
+
+---
+
+### 3. Worker Stack
+
+* ECS or Lambda worker
+* Poll SQS queue
+* Process messages
+
+---
+
+### 4. Inference Stack
+
+Support two modes:
+
+#### Option A (default):
+
+* Bedrock access (no infra, just IAM permissions)
+
+#### Option B:
+
+* ECS-based inference service (separate service)
+
+---
+
+### 5. Integration Stack
+
+* Example service calling internal APIs
+* Include retry + timeout pattern
+
+---
+
+## Constructs (Reusable)
+
+Create reusable constructs for:
+
+* ECS service
+* VPC endpoints
+* RDS
+* OpenSearch
+
+---
+
+## Networking Rules
+
+* ECS runs in **private subnets**
+* No public IPs
+* All AWS service access via **VPC endpoints**
+* ALB in public subnet (if used)
+
+---
+
+## Outputs
+
+Export:
+
+* VPC ID
+* Subnet IDs
+* API Gateway URL
+* SQS queue URL
+* RDS endpoint
+* OpenSearch endpoint
+
+---
+
+## Coding Requirements
+
+* Use CDK v2
+* Use TypeScript
+* Use environment-based configs (dev/prod)
+* Use meaningful naming conventions
+* Keep stacks loosely coupled via outputs/props
+
+---
+
+## Bonus (if possible)
+
+* Add example Dockerfile for ECS service
+* Add sample environment variables
+* Add comments explaining each section
+
+---
+
+## Important
+
+* Keep everything **generic (no business logic)**
+* Follow **production-ready patterns**
+* Use **best practices for security and networking**
+
+Generate the full CDK code step-by-step, starting with:
+
+1. `bin/app.ts`
+2. then platform stacks
+3. then application stacks
+4. then reusable constructs
+
+You are an expert AWS CDK (TypeScript) developer working within an **enterprise-standard repository structure**.
+
+## Goal
+
+Generate a **scaffolded CDK project** that:
+
+* creates **empty stack files first**
+* follows **existing organizational patterns**
+* uses **YAML-based configuration for environments and stacks**
+* supports **incremental deployment (platform stacks first, then application stacks)**
+* enables **independent testing of stack groups**
+
+Do NOT fully implement resources yet — focus on **structure, wiring, and extensibility**.
+
+---
+
+## Key Requirements
+
+### 1. Follow Existing Repo Standards
+
+Assume the repository already has:
+
+* environment configs in YAML (e.g., `env/dev.yaml`, `env/prod.yaml`)
+* stack configuration YAML (e.g., `config/stacks.yaml`)
+* shared utilities and base constructs
+* naming conventions and tagging standards
+
+Your code must:
+
+* read configuration from YAML
+* avoid hardcoding values
+* support environment-based deployments
+
+---
+
+### 2. Project Structure
+
+Generate scaffolding aligned to:
+
+```id="n3zqhz"
+/cdk
+  /bin
+    app.ts
+  /lib
+    /platform
+      network-stack.ts
+      security-stack.ts
+      ingress-stack.ts
+      messaging-stack.ts
+      data-stack.ts
+      observability-stack.ts
+    /application
+      compute-stack.ts
+      api-stack.ts
+      worker-stack.ts
+      inference-stack.ts
+      integration-stack.ts
+  /config
+    env/
+      dev.yaml
+      prod.yaml
+    stacks.yaml
+  /utils
+    config-loader.ts
+    stack-factory.ts
+```
+
+---
+
+### 3. Stack Scaffolding (Important)
+
+For EACH stack:
+
+* create class extending `cdk.Stack`
+* define constructor with props interface
+* include placeholders only (no full resources yet)
+* include:
+
+  * logging statement (console or CDK annotation)
+  * TODO comments for future implementation
+* export stack class
+
+Example:
+
+```ts
+export class NetworkStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: NetworkStackProps) {
+    super(scope, id, props);
+
+    // TODO: Create VPC, subnets, endpoints
+  }
+}
+```
+
+---
+
+### 4. YAML-Driven Configuration
+
+Implement:
+
+#### `config-loader.ts`
+
+* reads YAML files
+* parses environment config
+* parses stack config
+* returns typed objects
+
+#### Example YAML
+
+```yaml
+environment: dev
+region: us-east-1
+account: 123456789012
+```
+
+```yaml
+stacks:
+  - name: network
+    enabled: true
+  - name: security
+    enabled: true
+  - name: ingress
+    enabled: true
+```
+
+---
+
+### 5. Stack Factory Pattern
+
+Create `stack-factory.ts`:
+
+* dynamically instantiate stacks based on YAML
+* support enabling/disabling stacks
+* group stacks into:
+
+#### Platform Stack Group
+
+* network
+* security
+* ingress
+* messaging
+* data
+* observability
+
+#### Application Stack Group
+
+* compute
+* api
+* worker
+* inference
+* integration
+
+---
+
+### 6. app.ts Behavior
+
+* load environment config
+* load stack config
+* create CDK app
+* call stack factory
+* deploy ONLY enabled stacks
+
+Support:
+
+* `cdk deploy platform-*`
+* `cdk deploy application-*`
+
+---
+
+### 7. Deployment Strategy
+
+Support phased deployment:
+
+#### Phase 1:
+
+Deploy only platform stacks
+
+#### Phase 2:
+
+Deploy application stacks consuming outputs
+
+Ensure:
+
+* stacks can be deployed independently
+* no hard dependencies initially
+* use placeholders for cross-stack references
+
+---
+
+### 8. Outputs (Scaffold Only)
+
+Add placeholder outputs:
+
+```ts
+new cdk.CfnOutput(this, "PlaceholderOutput", {
+  value: "TBD"
+});
+```
+
+---
+
+### 9. Coding Standards
+
+* Use CDK v2
+* TypeScript
+* Strong typing for props
+* Follow clean modular design
+* Add comments for future implementation
+* Do not implement actual AWS resources yet
+
+---
+
+## Expected Output
+
+Generate:
+
+1. `app.ts`
+2. `config-loader.ts`
+3. `stack-factory.ts`
+4. All platform stack files (empty scaffolds)
+5. All application stack files (empty scaffolds)
+6. Sample YAML configs
+
+---
+
+## Important Instructions
+
+* Focus on **scaffolding, not full implementation**
+* Make code **extendable and enterprise-ready**
+* Keep everything **generic and reusable**
+* Ensure **clear separation of platform vs application stacks**
+
+---
+
+## Next Steps (Do NOT implement now)
+
+Later we will:
+
+* implement platform stacks fully
+* test deployment
+* add cross-stack dependencies
+* add ECS, RDS, SQS, Bedrock integrations
+
+---
+
+Start by generating:
+
+1. `app.ts`
+2. `config-loader.ts`
+3. `stack-factory.ts`
+
+Then proceed to scaffold all stack files.
 
 # 🔷 Key Benefits (Say This Clearly)
 
