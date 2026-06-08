@@ -1,0 +1,223 @@
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 0,
+      "width": 6,
+      "height": 6,
+      "properties": {
+        "title": "Total input tokens (1h)",
+        "view": "singleValue",
+        "metrics": [
+          [
+            {
+              "expression": "SUM(METRICS())",
+              "label": "All profiles",
+              "id": "e1",
+              "period": 3600,
+              "stat": "Sum"
+            }
+          ],
+          [
+            "AWS/Bedrock",
+            "InputTokenCount",
+            "InferenceProfileId",
+            "team-risk-claude3-5",
+            { "id": "m1", "visible": false, "stat": "Sum", "period": 3600 }
+          ],
+          [
+            ".",
+            ".",
+            "InferenceProfileId",
+            "team-ml-titan-embed",
+            { "id": "m2", "visible": false, "stat": "Sum", "period": 3600 }
+          ],
+          [
+            ".",
+            ".",
+            "InferenceProfileId",
+            "team-ops-nova-pro",
+            { "id": "m3", "visible": false, "stat": "Sum", "period": 3600 }
+          ]
+        ],
+        "period": 3600,
+        "stat": "Sum",
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 6,
+      "y": 0,
+      "width": 6,
+      "height": 6,
+      "properties": {
+        "title": "Invocations (1h)",
+        "view": "singleValue",
+        "metrics": [
+          [
+            {
+              "expression": "SUM(METRICS())",
+              "label": "All profiles",
+              "id": "e1",
+              "period": 3600,
+              "stat": "Sum"
+            }
+          ],
+          [
+            "AWS/Bedrock",
+            "Invocations",
+            "InferenceProfileId",
+            "team-risk-claude3-5",
+            { "id": "m1", "visible": false, "stat": "Sum", "period": 3600 }
+          ],
+          [
+            ".",
+            ".",
+            "InferenceProfileId",
+            "team-ml-titan-embed",
+            { "id": "m2", "visible": false, "stat": "Sum", "period": 3600 }
+          ],
+          [
+            ".",
+            ".",
+            "InferenceProfileId",
+            "team-ops-nova-pro",
+            { "id": "m3", "visible": false, "stat": "Sum", "period": 3600 }
+          ]
+        ],
+        "period": 3600,
+        "stat": "Sum",
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 6,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Token usage per profile (input + output)",
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [
+            "AWS/Bedrock",
+            "InputTokenCount",
+            "InferenceProfileId",
+            "team-risk-claude3-5",
+            { "label": "risk-claude3-5 input", "stat": "Sum", "period": 60, "color": "#1f77b4" }
+          ],
+          [
+            ".",
+            "OutputTokenCount",
+            "InferenceProfileId",
+            "team-risk-claude3-5",
+            { "label": "risk-claude3-5 output", "stat": "Sum", "period": 60, "color": "#aec7e8" }
+          ],
+          [
+            ".",
+            "InputTokenCount",
+            "InferenceProfileId",
+            "team-ml-titan-embed",
+            { "label": "ml-titan-embed input", "stat": "Sum", "period": 60, "color": "#2ca02c" }
+          ],
+          [
+            ".",
+            "OutputTokenCount",
+            "InferenceProfileId",
+            "team-ml-titan-embed",
+            { "label": "ml-titan-embed output", "stat": "Sum", "period": 60, "color": "#98df8a" }
+          ],
+          [
+            ".",
+            "InputTokenCount",
+            "InferenceProfileId",
+            "team-ops-nova-pro",
+            { "label": "ops-nova-pro input", "stat": "Sum", "period": 60, "color": "#d62728" }
+          ],
+          [
+            ".",
+            "OutputTokenCount",
+            "InferenceProfileId",
+            "team-ops-nova-pro",
+            { "label": "ops-nova-pro output", "stat": "Sum", "period": 60, "color": "#ff9896" }
+          ]
+        ],
+        "period": 60,
+        "region": "us-east-1",
+        "yAxis": { "left": { "label": "Tokens", "showUnits": false } }
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 0,
+      "width": 12,
+      "height": 12,
+      "properties": {
+        "title": "Quota utilization — throttles per profile (proxy)",
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [
+            "AWS/Bedrock",
+            "InvocationThrottles",
+            "InferenceProfileId",
+            "team-risk-claude3-5",
+            { "label": "risk-claude3-5 throttles", "stat": "Sum", "period": 60, "color": "#1f77b4" }
+          ],
+          [
+            ".",
+            ".",
+            "InferenceProfileId",
+            "team-ml-titan-embed",
+            { "label": "ml-titan-embed throttles", "stat": "Sum", "period": 60, "color": "#2ca02c" }
+          ],
+          [
+            ".",
+            ".",
+            "InferenceProfileId",
+            "team-ops-nova-pro",
+            { "label": "ops-nova-pro throttles", "stat": "Sum", "period": 60, "color": "#d62728" }
+          ],
+          [
+            {
+              "expression": "(m1/200000)*100",
+              "label": "risk-claude3-5 TPM % (est.)",
+              "id": "e1",
+              "period": 60,
+              "yAxis": "right",
+              "color": "#7f7f7f"
+            }
+          ],
+          [
+            "AWS/Bedrock",
+            "InputTokenCount",
+            "InferenceProfileId",
+            "team-risk-claude3-5",
+            { "id": "m1", "visible": false, "stat": "Sum", "period": 60 }
+          ]
+        ],
+        "period": 60,
+        "region": "us-east-1",
+        "yAxis": {
+          "left": { "label": "Throttle count", "showUnits": false, "min": 0 },
+          "right": { "label": "% of quota (est.)", "showUnits": false, "min": 0, "max": 100 }
+        },
+        "annotations": {
+          "horizontal": [
+            {
+              "label": "Throttle threshold",
+              "value": 5,
+              "color": "#ff6b6b",
+              "fill": "above"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
